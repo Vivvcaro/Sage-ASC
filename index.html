@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SAGE — Clinical Protocol for Altered States</title>
+<meta name="description" content="SAGE is a structured clinical protocol using sound and music to guide patients into non-ordinary states of consciousness."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#060910;--surface:#0b0f1c;--panel:#0e1322;--alt:#111828;
+  --border:rgba(255,255,255,0.08);--glass:rgba(255,255,255,0.04);
+  --text:#e8e2f4;--dim:rgba(232,226,244,0.54);--muted:rgba(232,226,244,0.30);
+  --acc:#b060c8;--acc2:#d094e4;--acc-pale:rgba(176,96,200,0.10);
+  --teal:#3eb8b0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--ink);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-weight:300;overflow-x:hidden;cursor:none;font-size:14px;line-height:1.75;}
+
+/* CURSOR */
+#cur{position:fixed;width:7px;height:7px;border-radius:50%;background:var(--acc);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
+#cur2{position:fixed;width:32px;height:32px;border-radius:50%;border:1px solid rgba(176,96,200,0.35);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .1s,top .1s,width .2s,height .2s;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:15px 52px;transition:background .5s,border-color .5s,backdrop-filter .5s;}
+nav.scrolled{background:rgba(6,9,16,0.9);border-bottom:1px solid var(--border);backdrop-filter:blur(22px);}
+.logo-wrap{display:flex;align-items:baseline;gap:12px;text-decoration:none;cursor:none;}
+.logo-m{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;letter-spacing:.14em;color:var(--text);}
+.logo-tag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);border:1px solid rgba(176,96,200,0.3);padding:3px 9px;}
+.nav-r{display:flex;align-items:center;gap:3px;}
+.nav-tab{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:8px 14px;transition:color .25s,background .25s;border:1px solid transparent;cursor:none;background:none;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active-tab{color:var(--acc);}
+.nav-tab.cta-btn{color:var(--acc);border-color:rgba(176,96,200,0.4);margin-left:8px;}
+.nav-tab.cta-btn:hover{background:var(--acc-pale);border-color:var(--acc);}
+.mob-btn{display:none;background:none;border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:8px 13px;cursor:none;}
+
+/* VIEWS */
+.view{display:none;animation:viewIn .4s ease;}
+.view.active{display:block;}
+@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;overflow:hidden;padding-top:64px;}
+.hero-left{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;padding:68px 52px;background:linear-gradient(to right,rgba(6,9,16,.97) 52%,rgba(6,9,16,.12));}
+.hkick{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--acc);margin-bottom:20px;opacity:0;animation:up .9s ease .3s forwards;display:flex;align-items:center;gap:10px;}
+.hkick::before{content:'';width:24px;height:1px;background:var(--acc);}
+.htitle{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(30px,3.6vw,54px);line-height:1.05;color:var(--text);opacity:0;animation:up 1.1s ease .45s forwards;}
+.htitle em{font-style:italic;color:var(--acc2);display:block;}
+.hbody{margin-top:16px;font-size:15px;line-height:1.82;color:var(--dim);max-width:440px;opacity:0;animation:up 1s ease .65s forwards;}
+.hmet{margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);opacity:0;animation:up .8s ease .85s forwards;}
+.hm{background:var(--surface);padding:15px 14px;}
+.hmn{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;color:var(--acc);line-height:1.2;margin-bottom:4px;}
+.hml{font-size:11px;color:var(--muted);line-height:1.5;}
+.hact{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;opacity:0;animation:up .8s ease 1.05s forwards;}
+.btn-acc{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;color:var(--ink);background:var(--acc);padding:12px 26px;display:inline-block;transition:opacity .3s,transform .25s;cursor:none;}
+.btn-acc:hover{opacity:.85;transform:translateY(-1px);}
+.btn-out{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;color:var(--dim);border:1px solid var(--border);padding:12px 20px;display:inline-block;transition:color .3s,border-color .3s;cursor:none;}
+.btn-out:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
+.hero-right{position:relative;}
+#hcv{position:absolute;inset:0;width:100%;height:100%;}
+.hbadge{position:absolute;bottom:20px;right:20px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);opacity:.38;}
+
+/* ORGANIC BAND */
+.ob{position:relative;overflow:hidden;height:140px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.ob canvas{display:block;width:100%;height:100%;}
+
+/* PROOF BAR */
+.proof-bar{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--panel);display:grid;grid-template-columns:repeat(4,1fr);}
+.pc{padding:28px 20px;border-right:1px solid var(--border);text-align:center;}
+.pc:last-child{border-right:none;}
+.pn{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--acc);line-height:1;}
+.pl{margin-top:7px;font-size:12px;color:var(--muted);line-height:1.55;}
+.pcite{margin-top:5px;font-family:'DM Mono',monospace;font-size:8px;color:rgba(176,96,200,.35);letter-spacing:.1em;}
+
+/* SECTIONS */
+.sw{padding:88px 52px;max-width:1240px;margin:0 auto;}
+.sk{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--acc);margin-bottom:11px;display:flex;align-items:center;gap:10px;}
+.sk::before{content:'';width:20px;height:1px;background:var(--acc);}
+.sh{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(26px,3.4vw,46px);line-height:1.08;color:var(--text);}
+.sh em{font-style:italic;color:var(--acc2);}
+.si{margin-top:13px;font-size:15px;line-height:1.82;color:var(--dim);max-width:560px;}
+
+/* INDICATIONS */
+.ind-grid{margin-top:48px;display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--border);}
+.ic{background:var(--surface);padding:40px 36px;position:relative;overflow:hidden;transition:background .3s;}
+.ic:hover{background:var(--panel);}
+.ic::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--acc);opacity:0;transition:opacity .35s;}
+.ic:hover::before{opacity:1;}
+.inum{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);margin-bottom:13px;}
+.ititle{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--text);margin-bottom:11px;line-height:1.2;}
+.ititle em{font-style:italic;color:var(--acc2);}
+.ibody{font-size:14px;line-height:1.85;color:var(--dim);}
+.itags{margin-top:16px;display:flex;flex-wrap:wrap;gap:6px;}
+.itag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);border:1px solid rgba(176,96,200,.25);padding:3px 9px;}
+.maxim{margin-top:28px;font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--dim);text-align:center;padding:22px 28px;border:1px solid var(--border);}
+
+/* PROTOCOL */
+.pbg{background:var(--panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:88px 52px;position:relative;overflow:hidden;}
+.pin{max-width:1240px;margin:0 auto;position:relative;z-index:1;}
+.pgrid{margin-top:52px;display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border);}
+.ps{background:var(--surface);padding:36px 32px;transition:background .3s;}
+.ps:hover{background:var(--alt);}
+.psn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.22em;color:var(--acc);margin-bottom:13px;display:flex;align-items:center;gap:10px;}
+.psn::after{content:'';flex:1;height:1px;background:rgba(176,96,200,.18);}
+.pst{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--text);margin-bottom:9px;line-height:1.15;}
+.pst em{font-style:italic;color:var(--acc2);}
+.psb{font-size:14px;line-height:1.88;color:var(--dim);}
+.psd{margin-top:12px;display:flex;flex-direction:column;gap:6px;}
+.pdr{display:flex;align-items:baseline;gap:9px;font-size:12px;color:var(--muted);}
+.pdr::before{content:'→';color:var(--acc);font-size:9px;flex-shrink:0;}
+.psf{grid-column:1/-1;}
+
+/* MEASUREMENT */
+.ms{position:relative;overflow:hidden;}
+#mcv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.minn{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:88px 52px;}
+.mgrid{margin-top:52px;display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);}
+.mcard{background:rgba(11,15,28,0.88);padding:36px 28px;transition:background .3s;backdrop-filter:blur(4px);}
+.mcard:hover{background:rgba(14,19,34,0.92);}
+.mbadge{margin-bottom:14px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--acc);border:1px solid rgba(176,96,200,.25);display:inline-block;padding:4px 11px;}
+.mtitle{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--text);margin-bottom:9px;}
+.mbody{font-size:14px;line-height:1.85;color:var(--dim);}
+.mref{margin-top:12px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.1em;color:rgba(176,96,200,.35);line-height:1.6;}
+
+/* POSITIONING */
+.posbg{background:var(--alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:88px 52px;}
+.posinn{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+.posp{font-size:15px;line-height:1.82;color:var(--dim);margin-top:14px;}
+.ptbl{width:100%;border-collapse:collapse;margin-top:6px;}
+.ptbl th{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:10px 13px;text-align:left;border-bottom:1px solid var(--border);}
+.ptbl td{font-size:13px;color:var(--dim);padding:11px 13px;border-bottom:1px solid var(--border);}
+.ptbl td:first-child{color:var(--text);}
+.ptbl tr:last-child td{border-bottom:none;}
+.ck{color:var(--acc);}.cx{color:var(--muted);}
+
+/* ADVISORY (landing — condensed) */
+.advbg{background:var(--panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:88px 52px;position:relative;overflow:hidden;}
+#advcv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.advinn{max-width:1240px;margin:0 auto;position:relative;z-index:1;}
+.adv-names{margin-top:48px;display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--border);}
+.adv-name-card{background:rgba(11,15,28,0.88);padding:28px 32px;backdrop-filter:blur(4px);transition:background .3s;}
+.adv-name-card:hover{background:rgba(14,19,34,0.9);}
+.adv-n{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--text);margin-bottom:3px;}
+.adv-role{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);}
+.adv-link{margin-top:28px;display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);text-decoration:none;cursor:none;transition:opacity .25s;}
+.adv-link:hover{opacity:.7;}
+
+/* CTA */
+.ctasec{padding:120px 52px;text-align:center;position:relative;overflow:hidden;}
+#ctacv{position:absolute;inset:0;width:100%;height:100%;}
+.ctaw{position:relative;z-index:2;max-width:600px;margin:0 auto;}
+.ctalbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.ctalbl::before,.ctalbl::after{content:'';width:20px;height:1px;background:var(--acc);}
+.ctah{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(30px,4vw,58px);line-height:1.06;color:var(--text);margin-bottom:14px;}
+.ctah em{font-style:italic;color:var(--acc2);}
+.ctap{font-size:15px;color:var(--dim);margin:0 auto 14px;line-height:1.82;}
+.ctabl{text-align:left;max-width:380px;margin:0 auto 28px;display:flex;flex-direction:column;gap:8px;}
+.ctabi{display:flex;align-items:baseline;gap:10px;font-size:14px;color:var(--dim);}
+.ctabi::before{content:'→';color:var(--acc);font-size:10px;flex-shrink:0;}
+.ctar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.ctan{margin-top:16px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+
+/* ═══ TAB CONTENT PAGES ═══ */
+.tab-page{padding:100px 52px 80px;max-width:1240px;margin:0 auto;}
+.tab-page-wide{padding:100px 52px 80px;}
+.tp-header{padding-bottom:48px;border-bottom:1px solid var(--border);margin-bottom:52px;}
+
+/* ABOUT TAB */
+.about-advisors{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--border);margin-top:48px;}
+.acard{background:var(--surface);padding:40px 36px;}
+.acard:hover{background:var(--panel);}
+.acard-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--text);margin-bottom:4px;}
+.acard-role{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--acc);margin-bottom:14px;}
+.acard-body{font-size:14px;line-height:1.85;color:var(--dim);}
+.founder-section{margin-top:64px;padding-top:52px;border-top:1px solid var(--border);}
+.founder-grid{display:grid;grid-template-columns:1fr 2fr;gap:52px;align-items:start;margin-top:32px;}
+.founder-meta .fn{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--text);line-height:1.1;margin-bottom:8px;}
+.founder-meta .frl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin-bottom:14px;}
+.founder-meta a{display:inline-block;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);text-decoration:none;border:1px solid rgba(176,96,200,.3);padding:7px 13px;transition:background .3s;cursor:none;}
+.founder-meta a:hover{background:var(--acc-pale);}
+.founder-bio{font-size:15px;line-height:1.85;color:var(--dim);}
+.about-sage-section{margin-top:64px;padding-top:52px;border-top:1px solid var(--border);}
+.about-two-col{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:32px;}
+.about-col h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--text);margin-bottom:12px;}
+.about-col h3 em{font-style:italic;color:var(--acc2);}
+.about-col p{font-size:14px;line-height:1.85;color:var(--dim);margin-bottom:10px;}
+.about-list{display:flex;flex-direction:column;gap:7px;margin-top:6px;}
+.about-li{display:flex;align-items:baseline;gap:10px;font-size:14px;color:var(--dim);}
+.about-li::before{content:'→';color:var(--acc);font-size:10px;flex-shrink:0;}
+.mission-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);margin-top:28px;}
+.mc2{background:var(--panel);padding:24px 20px;}
+.mc2 .arr{font-family:'DM Mono',monospace;font-size:9px;color:var(--acc);margin-bottom:8px;}
+.mc2 p{font-size:14px;line-height:1.82;color:var(--dim);}
+
+/* MUSIC TAB */
+.music-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);margin-top:44px;}
+.mug-card{background:var(--surface);padding:36px 28px;transition:background .3s;}
+.mug-card:hover{background:var(--alt);}
+.mug-card h3{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;color:var(--text);margin-bottom:8px;}
+.mug-card p{font-size:14px;line-height:1.85;color:var(--dim);}
+.music-approach{margin-top:52px;}
+.music-approach h3{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--text);margin-bottom:16px;}
+.music-approach h3 em{font-style:italic;color:var(--acc2);}
+.music-list{display:grid;grid-template-columns:1fr 1fr;gap:0 44px;}
+.mli{display:flex;align-items:baseline;gap:10px;font-size:14px;color:var(--dim);padding:9px 0;border-bottom:1px solid var(--border);}
+.mli::before{content:'◎';color:var(--acc);font-size:9px;flex-shrink:0;}
+.artists-box{margin-top:52px;padding:40px 44px;border:1px solid var(--border);background:var(--glass);display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+.artists-box h3{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--text);line-height:1.15;}
+.artists-box h3 em{font-style:italic;color:var(--acc2);}
+.artists-box p{font-size:14px;line-height:1.82;color:var(--dim);margin-bottom:12px;}
+.artists-box .tgl{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--acc2);margin-top:14px;}
+
+/* LICENSING TAB */
+.lic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);margin-top:44px;}
+.lic-card{background:var(--surface);padding:36px 28px;transition:background .3s;}
+.lic-card:hover{background:var(--panel);}
+.lic-card h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--text);margin-bottom:10px;}
+.lic-card h3 em{font-style:italic;color:var(--acc2);}
+.lic-card p{font-size:14px;line-height:1.85;color:var(--dim);}
+.lic-list{margin-top:12px;display:flex;flex-direction:column;gap:6px;}
+.lic-li{display:flex;align-items:baseline;gap:9px;font-size:13px;color:var(--muted);}
+.lic-li::before{content:'→';color:var(--acc);font-size:10px;}
+.ea-box{margin-top:40px;padding:36px 40px;border:1px solid rgba(176,96,200,.3);background:var(--acc-pale);}
+.ea-h{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:8px;}
+.ea-h em{font-style:italic;color:var(--acc2);}
+.ea-p{font-size:15px;line-height:1.82;color:var(--dim);margin-bottom:14px;}
+.ea-list{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;}
+.ea-li{display:flex;align-items:baseline;gap:10px;font-size:14px;color:var(--dim);}
+.ea-li::before{content:'→';color:var(--acc);font-size:10px;}
+.pdf-box{margin-top:40px;border:1px solid var(--border);padding:36px 40px;background:var(--surface);}
+.pdf-box h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--text);margin-bottom:14px;}
+.pdf-list{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+.pdf-li{display:flex;align-items:baseline;gap:10px;font-size:14px;color:var(--dim);}
+.pdf-li::before{content:'→';color:var(--acc);font-size:10px;}
+.pdf-lock{display:flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:8px 12px;margin-bottom:12px;}
+
+/* CONTACT TAB */
+.contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:64px;margin-top:44px;align-items:start;}
+.contact-info p{font-size:15px;line-height:1.82;color:var(--dim);margin-bottom:18px;}
+.cwho{display:flex;flex-direction:column;gap:8px;margin-bottom:28px;}
+.cwho-i{display:flex;align-items:baseline;gap:10px;font-size:14px;color:var(--dim);}
+.cwho-i::before{content:'→';color:var(--acc);font-size:10px;}
+.cdet{display:flex;flex-direction:column;gap:12px;}
+.cdrow{display:flex;flex-direction:column;gap:3px;}
+.cdl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.cdv{font-size:14px;color:var(--dim);}
+.cform{display:flex;flex-direction:column;gap:12px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ff{display:flex;flex-direction:column;gap:6px;}
+.ff label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.ff input,.ff select,.ff textarea{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:11px 14px;width:100%;outline:none;transition:border-color .25s;-webkit-appearance:none;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--acc);}
+.ff select option{background:var(--surface);}
+.ff textarea{resize:vertical;min-height:110px;line-height:1.6;}
+.fsub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);background:var(--acc);padding:13px 26px;border:none;cursor:none;transition:opacity .3s,transform .25s;align-self:flex-start;}
+.fsub:hover{opacity:.85;transform:translateY(-1px);}
+.fnote{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* FOOTER */
+footer{padding:28px 52px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.ftl{display:flex;align-items:baseline;gap:10px;}
+.ftn{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--muted);}
+.ftt{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);opacity:.6;}
+.ftlinks{display:flex;gap:14px;flex-wrap:wrap;}
+.ftlinks a,.ftlinks button{font-size:12px;color:var(--muted);text-decoration:none;letter-spacing:.06em;transition:color .25s;background:none;border:none;padding:0;cursor:none;}
+.ftlinks a:hover,.ftlinks button:hover{color:var(--dim);}
+.ftcopy{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);opacity:.5;}
+
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .85s,transform .85s;}
+.reveal.vis{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.22s;}.d3{transition-delay:.34s;}.d4{transition-delay:.46s;}
+
+@media(max-width:1060px){
+  nav{padding:12px 20px;}.nav-r{display:none;}.mob-btn{display:block;}
+  .hero{grid-template-columns:1fr;}.hero-left{background:rgba(6,9,16,.97);padding:72px 20px 48px;}.hero-right{display:none;}
+  .hmet,.proof-bar{grid-template-columns:1fr 1fr;}
+  .ind-grid,.pgrid,.mgrid,.adv-names,.about-advisors,.founder-grid,.about-two-co,.music-grid,.lic-grid,.contact-grid,.mission-cards,.artists-box,.music-list{grid-template-columns:1fr;}
+  .posinn{grid-template-columns:1fr;}
+  .sw,.minn,.tab-page,.tab-page-wide{padding:72px 20px 60px;}
+  .pbg,.posbg,.advbg,.ctasec{padding:72px 20px;}
+  footer{padding:20px;flex-direction:column;align-items:flex-start;}
+  .frow{grid-template-columns:1fr;}.artists-box,.ea-box,.pdf-box{padding:24px 20px;}
+  .psf .psd{grid-template-columns:1fr !important;}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur2"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="logo-wrap" onclick="switchView('home',this);return false;">
+    <span class="logo-m">SAGE</span><span class="logo-tag">Clinical Protocol</span>
+  </a>
+  <div class="nav-r" id="navr">
+    <button class="nav-tab active-tab" onclick="switchView('home',this)">Protocol</button>
+    <button class="nav-tab" onclick="switchView('about',this)">About</button>
+    <button class="nav-tab" onclick="switchView('music',this)">Music</button>
+    <button class="nav-tab" onclick="switchView('licensing',this)">Licensing</button>
+    <button class="nav-tab" onclick="switchView('contact',this)">Contact</button>
+    <button class="nav-tab cta-btn" onclick="switchView('contact',this)">Early Access</button>
+  </div>
+  <button class="mob-btn" onclick="toggleMob()">Menu</button>
+</nav>
+<div id="mm" style="display:none;position:fixed;top:52px;left:0;right:0;z-index:190;background:rgba(6,9,16,0.98);border-bottom:1px solid var(--border);flex-direction:column;padding:12px 20px;gap:2px;backdrop-filter:blur(20px);">
+  <button class="nav-tab" onclick="switchView('home',this);toggleMob()">Protocol</button>
+  <button class="nav-tab" onclick="switchView('about',this);toggleMob()">About</button>
+  <button class="nav-tab" onclick="switchView('music',this);toggleMob()">Music</button>
+  <button class="nav-tab" onclick="switchView('licensing',this);toggleMob()">Licensing</button>
+  <button class="nav-tab" onclick="switchView('contact',this);toggleMob()">Contact</button>
+</div>
+
+<!-- ══════════════════════════════════
+     HOME / LANDING VIEW
+══════════════════════════════════ -->
+<div class="view active" id="view-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hkick">Evidence-based acoustic therapy protocol</div>
+      <h1 class="htitle">Your clients can access altered states.<br/><em>Without substances.<br/>With measurable outcomes.</em></h1>
+      <p class="hbody">SAGE is a practitioner-led, safety-first protocol for accessing non-ordinary states of consciousness using sound and music within a structured clinical framework — a validated preparation pathway for psychedelic-assisted therapy, and a standalone intervention for PTSD, anxiety, and depression.</p>
+      <div class="hmet">
+        <div class="hm"><div class="hmn">Personalised Journey</div><div class="hml">Based on traits, resilience indicators &amp; goals</div></div>
+        <div class="hm"><div class="hmn">Real-Time HRV</div><div class="hml">Autonomic monitoring &amp; adaptive sonic modulation</div></div>
+        <div class="hm"><div class="hmn">Structured Integration</div><div class="hml">Holistic integrative tasks across the programme</div></div>
+      </div>
+      <div class="hact">
+        <button class="btn-acc" onclick="switchView('contact')">Request Clinical Demo</button>
+        <button class="btn-out" onclick="document.getElementById('indications').scrollIntoView({behavior:'smooth'})">View the Protocol</button>
+      </div>
+    </div>
+    <div class="hero-right"><canvas id="hcv"></canvas><div class="hbadge">SAGE · Safety-First · GDPR Compliant</div></div>
+  </section>
+
+  <!-- PROOF BAR -->
+  <div class="proof-bar">
+    <div class="pc reveal"><div class="pn">87%</div><div class="pl">Of patients access material unreachable via talk therapy alone</div><div class="pcite">Carhart-Harris et al., 2018</div></div>
+    <div class="pc reveal d1"><div class="pn">3.6×</div><div class="pl">Decrease in stress scores over a structured programme</div><div class="pcite">Csikszentmihalyi — ESM</div></div>
+    <div class="pc reveal d2"><div class="pn">40%</div><div class="pl">Reduction in PTSD symptom severity — standalone music protocol</div><div class="pcite">Bradt &amp; Dileo, 2010 · Cochrane</div></div>
+    <div class="pc reveal d3"><div class="pn">1/10th</div><div class="pl">The cost of individual psychedelic-assisted therapy</div><div class="pcite">MAPS PAT analysis, 2023</div></div>
+  </div>
+
+  <div class="ob"><canvas id="band1"></canvas></div>
+
+  <!-- INDICATIONS -->
+  <section id="indications">
+    <div class="sw">
+      <p class="sk reveal">Clinical indications</p>
+      <h2 class="sh reveal">Where SAGE<br/><em>fits your practice</em></h2>
+      <div class="ind-grid">
+        <div class="ic reveal">
+          <div class="inum">Indication 01</div>
+          <h3 class="ititle">Psychedelic-assisted therapy<br/><em>preparation &amp; integration</em></h3>
+          <p class="ibody">Before any pharmacological intervention, SAGE familiarises patients with non-ordinary states — reducing adverse reactions, ego-dissolution anxiety, and treatment resistance. Patients arrive knowing their inner landscape. The music becomes a trusted container, not an unknown.<br/><br/>Post-session, the protocol extends and deepens therapeutic processing, significantly increasing the window of neuroplasticity following a psychedelic experience.</p>
+          <div class="itags"><span class="itag">Psilocybin</span><span class="itag">Ketamine</span><span class="itag">MDMA-AT</span><span class="itag">Preparation</span><span class="itag">Integration</span></div>
+        </div>
+        <div class="ic reveal d1">
+          <div class="inum">Indication 02</div>
+          <h3 class="ititle">Standalone intervention<br/><em>PTSD · Anxiety · Depression</em></h3>
+          <p class="ibody">For patients for whom psychedelic-assisted therapy is contraindicated, financially inaccessible, or personally undesired, SAGE provides comparable depth of access via acoustic induction alone.<br/><br/>The emotional release and grief protocols access stored somatic memory without requiring verbal articulation of traumatic content — particularly effective for complex PTSD and high alexithymia or dissociation.</p>
+          <div class="itags"><span class="itag">Complex PTSD</span><span class="itag">Treatment-resistant</span><span class="itag">Alexithymia</span><span class="itag">Depression</span><span class="itag">GAD</span></div>
+        </div>
+        <div class="ic reveal d2">
+          <div class="inum">Indication 03</div>
+          <h3 class="ititle">Group &amp; community<br/><em>therapeutic settings</em></h3>
+          <p class="ibody">Individual psychedelic therapy costs £2,000–£10,000 per course. SAGE offers a clinically credible alternative at a fraction of the cost, with synchronised communal sessions allowing multiple patients to journey simultaneously and integrate in groups of up to ten.<br/><br/>Designed for community mental health clinics, residential treatment, and NHS group therapy settings.</p>
+          <div class="itags"><span class="itag">Group therapy</span><span class="itag">Community clinics</span><span class="itag">NHS compatible</span><span class="itag">Attachment</span></div>
+        </div>
+        <div class="ic reveal d3">
+          <div class="inum">Indication 04</div>
+          <h3 class="ititle">Patients who cannot or will not<br/><em>use psychedelics</em></h3>
+          <p class="ibody">Contraindications to psychedelic-assisted therapy — including personal history of psychosis, schizophrenia spectrum conditions, certain cardiovascular conditions, or patient preference — exclude a large population from depth-oriented altered-state work.<br/><br/>SAGE provides a safe, graded pathway for these populations, fully personalised and practitioner-guided at every point.</p>
+          <div class="itags"><span class="itag">Contraindicated PAT</span><span class="itag">Patient preference</span><span class="itag">Graded exposure</span><span class="itag">Practitioner-led</span></div>
+        </div>
+      </div>
+      <p class="maxim reveal">SAGE does not aim to maximise intensity. It aims to optimise safety, readiness, and integration.</p>
+    </div>
+  </section>
+
+  <!-- PROTOCOL -->
+  <div class="pbg">
+    <canvas id="pcv" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+    <div class="pin">
+      <p class="sk reveal">The clinical protocol</p>
+      <h2 class="sh reveal">End-to-end structured pathway —<br/><em>intake through to programme report</em></h2>
+      <div class="pgrid">
+        <div class="ps reveal"><div class="psn">Step 01</div><h3 class="pst"><em>Patient baseline</em> assessment</h3><p class="psb">Validated intake using a resilience scale, prior altered-state experience scoring across five domains, and trait-level psychological profiling. Generates a clinical readiness score and recommended entry pathway.</p><div class="psd"><div class="pdr">Validated resilience scale + ASC scoring</div><div class="pdr">Output: readiness tier + recommended protocol path</div></div></div>
+        <div class="ps reveal d1"><div class="psn">Step 02</div><h3 class="pst"><em>Intention setting</em> &amp; plan generation</h3><p class="psb">The client selects from five clinical intention pathways, or co-creates a specific therapeutic focus with the therapist. The system generates a personalised programme: session number, duration, frequency, timing, and set and setting guidance.</p><div class="psd"><div class="pdr">Pathways: Deep Rest · Expanded Awareness · Creative Flow · Emotional Processing · Clarity</div><div class="pdr">Optional tasks for between-session holistic integration</div></div></div>
+        <div class="ps reveal d2"><div class="psn">Step 03</div><h3 class="pst"><em>Session</em> — induction to close</h3><p class="psb">Mood assessment, somatic activation, a personalised music journey with optional voice recording, and reflective prompts. HRV monitoring via wearable if enabled. The sonic journey adapts in real time based on biofeedback.</p><div class="psd"><div class="pdr">Pre-session mood assessment + personalised journey + HRV data</div><div class="pdr">Peak: adaptive music generated by biofeedback</div></div></div>
+        <div class="ps reveal d3"><div class="psn">Step 04</div><h3 class="pst"><em>AI-guided integration</em> — 5 dimensions</h3><p class="psb">Post-session integration is one of the strongest predictors of intervention success. The AI guide conducts structured inquiry across somatic, visual, auditory, relational, and memory dimensions — cross-referencing in-session voice recordings.</p><div class="psd"><div class="pdr">Session fully recorded — accessible to patient and clinician</div><div class="pdr">Individual or group integration (max 10 per circle)</div></div></div>
+        <div class="ps psf reveal"><div class="psn">Step 05 · Programme Close</div><h3 class="pst"><em>Clinical report</em> — outcomes &amp; recommendations</h3><p class="psb">At programme close, SAGE produces a comprehensive clinical report: HRV trajectory across sessions, peak moment mapping, language pattern analysis, resilience scale delta, and recommended continuation pathway. The report is presented to the clinician for review, editing, and approval before use.</p><div class="psd" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px 22px;"><div class="pdr">HRV trajectory per session</div><div class="pdr">Language pattern &amp; intention alignment</div><div class="pdr">Resilience score delta</div><div class="pdr">Peak moment biometric mapping</div><div class="pdr">Continuation pathway recommendation</div><div class="pdr">GDPR-compliant · Exportable PDF</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ob"><canvas id="band2"></canvas></div>
+
+  <!-- MEASUREMENT -->
+  <section class="ms">
+    <canvas id="mcv"></canvas>
+    <div class="minn">
+      <p class="sk reveal">Clinical measurement</p>
+      <h2 class="sh reveal">Outcomes you can<br/><em>document and defend</em></h2>
+      <div class="mgrid">
+        <div class="mcard reveal"><div class="mbadge">Resilience Scale</div><h3 class="mtitle">Trait change in coping mechanisms over time</h3><p class="mbody">The resilience scale is administered at intake, mid-programme, and close. Delta scores provide a clean, peer-reviewed outcome metric for resilience change — suitable for clinical records, insurance submissions, and research contribution.</p><p class="mref">Connor &amp; Davidson, 2003 · Validated in 40+ languages</p></div>
+        <div class="mcard reveal d1"><div class="mbadge">HRV</div><h3 class="mtitle">Heart Rate Variability Monitoring</h3><p class="mbody">Optional integration with consumer HRV wearables (Apple Watch, Garmin, Polar). The system reads autonomic state in real time and adapts integration questioning depth — a dysregulated nervous system receives containment; a regulated one receives depth inquiry.</p><p class="mref">Thayer et al., 2012 · Neuroscience &amp; Biobehavioural Reviews</p></div>
+        <div class="mcard reveal d2"><div class="mbadge">NLP</div><h3 class="mtitle">Language Pattern Analysis</h3><p class="mbody">Every word spoken during integration is analysed for semantic proximity to the stated therapeutic intention. The system tracks linguistic evolution across sessions — from avoidance to engagement, from abstraction to embodiment, from past to present.</p><p class="mref">Pennebaker et al., LIWC framework · Adapted for therapeutic use</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POSITIONING -->
+  <div class="posbg">
+    <div class="posinn">
+      <div><p class="sk reveal">Why SAGE</p><h2 class="sh reveal">Where SAGE sits<br/><em>in the clinical landscape</em></h2><p class="posp reveal">SAGE is not a replacement for psychedelic-assisted therapy. It is the pathway that makes it safer, more effective, and more accessible — and a standalone intervention in its own right for patients who cannot or do not want to go pharmacological.</p></div>
+      <div class="reveal"><table class="ptbl"><thead><tr><th>Dimension</th><th>SAGE</th><th>Standard PAT</th><th>Talk Therapy</th></tr></thead><tbody><tr><td>Somatic memory access</td><td class="ck">✓</td><td class="ck">✓</td><td class="cx">Limited</td></tr><tr><td>Pre-verbal material</td><td class="ck">✓</td><td class="ck">✓</td><td class="cx">—</td></tr><tr><td>No substance required</td><td class="ck">✓</td><td class="cx">—</td><td class="ck">✓</td></tr><tr><td>Validated measurement</td><td class="ck">✓</td><td class="cx">Partial</td><td class="ck">✓</td></tr><tr><td>Group delivery</td><td class="ck">✓</td><td class="cx">Rare</td><td class="ck">✓</td></tr><tr><td>Cost per patient</td><td class="ck">Low</td><td class="cx">£2–10k</td><td>Medium</td></tr><tr><td>Depth of altered state</td><td class="ck">High</td><td class="ck">High</td><td class="cx">Low</td></tr></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="ob"><canvas id="band3"></canvas></div>
+
+  <!-- ADVISORY — condensed -->
+  <div class="advbg">
+    <canvas id="advcv"></canvas>
+    <div class="advinn">
+      <p class="sk reveal">Advisory network</p>
+      <h2 class="sh reveal">Supported by leading<br/><em>minds in the field</em></h2>
+      <p class="si reveal">SAGE is supported by an advisory network across psychology, neuroscience, altered states research, and immersive sound technology.</p>
+      <div class="adv-names">
+        <div class="adv-name-card reveal d1">
+          <div class="adv-n">Dr. David Luke</div>
+          <div class="adv-role">University of Greenwich · Psychology &amp; Consciousness Studies</div>
+        </div>
+        <div class="adv-name-card reveal d2">
+          <div class="adv-n">Valentin Randon</div>
+          <div class="adv-role">Head of Product · Muse &amp; Monroe Institute</div>
+        </div>
+        <div class="adv-name-card reveal d3">
+          <div class="adv-n">Dr. Emma Margetson</div>
+          <div class="adv-role">University of Greenwich · Senior Lecturer in Music &amp; Sound Design</div>
+        </div>
+        <div class="adv-name-card reveal d4">
+          <div class="adv-n">Viviana Caro</div>
+          <div class="adv-role">Founder · SAGE</div>
+        </div>
+      </div>
+      <button class="adv-link reveal" onclick="switchView('about')">Read full advisory bios &amp; about SAGE ↗</button>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="ctasec">
+    <canvas id="ctacv"></canvas>
+    <div class="ctaw">
+      <div class="ctalbl reveal">Early Access Programme</div>
+      <h2 class="ctah reveal">Ready to expand<br/><em>what's clinically possible?</em></h2>
+      <p class="ctap reveal">We are onboarding a limited number of clinicians into our Founding Cohort — early access pricing, direct involvement in protocol development, and priority access to future tools.</p>
+      <div class="ctabl reveal"><div class="ctabi">Early access pricing — reduced launch rate</div><div class="ctabi">Direct influence over protocol development</div><div class="ctabi">Priority access to future clinical tools</div><div class="ctabi">Direct support from the founding team</div></div>
+      <div class="ctar reveal"><button class="btn-acc" onclick="switchView('contact')">Request Clinical Demo</button><button class="btn-out" onclick="switchView('licensing')">Licensing &amp; PDF</button></div>
+      <p class="ctan reveal">GDPR compliant · Wearable integration · Practitioner dashboard · Clinical licensing available</p>
+    </div>
+  </section>
+
+</div><!-- /view-home -->
+
+<!-- ══════════════════════════════════
+     ABOUT VIEW
+══════════════════════════════════ -->
+<div class="view" id="view-about">
+  <div class="tab-page">
+    <div class="tp-header">
+      <p class="sk">About &amp; Advisory</p>
+      <h2 class="sh">The people and ideas<br/><em>behind SAGE</em></h2>
+    </div>
+
+    <p class="sk">Advisory network</p>
+    <h3 class="sh" style="font-size:clamp(22px,2.5vw,36px);margin-bottom:6px;">Supported by leading<br/><em>minds in the field</em></h3>
+    <p class="si">SAGE is supported by an advisory network bringing together expertise across psychology, neuroscience, altered states research, immersive sound, and neurotechnology.</p>
+
+    <div class="about-advisors">
+      <div class="acard">
+        <div class="acard-name">Dr. David Luke</div>
+        <div class="acard-role">University of Greenwich · Psychology &amp; Consciousness Studies</div>
+        <p class="acard-body">Researcher in psychology and consciousness studies with a particular focus on altered states, psychedelics, and anomalous experiences. His work spans academic research, field studies, and publications exploring the phenomenology, variability, and therapeutic potential of non-ordinary states of consciousness.</p>
+      </div>
+      <div class="acard">
+        <div class="acard-name">Valentin Randon</div>
+        <div class="acard-role">Head of Product · Muse &amp; Monroe Institute</div>
+        <p class="acard-body">Consciousness innovator and product leader specialising in building products that bridge neurophysiological sensing, adaptive feedback systems, and user experience design. A speaker on the philosophical and ethical dimensions of neurotechnology and brain data, with expertise in how wearable technology can support meditation, cognitive states, and human potential.</p>
+      </div>
+      <div class="acard">
+        <div class="acard-name">Dr. Emma Margetson</div>
+        <div class="acard-role">University of Greenwich · Senior Lecturer in Music &amp; Sound Design</div>
+        <p class="acard-body">Acousmatic composer, sound artist, and academic specialising in immersive and spatial sound. Programme Leader for the MA Music &amp; Sound Design at the University of Greenwich. Her compositions and research have been performed and recognised internationally in the fields of spatial and electroacoustic music.</p>
+      </div>
+      <div class="acard">
+        <div class="acard-name">Viviana Caro</div>
+        <div class="acard-role">Founder · SAGE</div>
+        <p class="acard-body">Viviana's work focuses on the design of structured acoustic protocols for altered states of consciousness, integrating principles from neuroaesthetics, consciousness studies, and immersive experience design. Her approach centres on creating measurable, non-pharmacological pathways to access and guide non-ordinary states — with an emphasis on safety, personalisation, and clinical applicability.</p>
+      </div>
+    </div>
+
+    <div class="founder-section">
+      <p class="sk">Founder</p>
+      <div class="founder-grid">
+        <div class="founder-meta">
+          <div class="fn">Viviana Caro</div>
+          <div class="frl">Founder · SAGE</div>
+          <a href="https://www.linkedin.com/in/vivianacaros/" target="_blank">↗ LinkedIn</a>
+        </div>
+        <p class="founder-bio">Viviana's work focuses on the design of structured acoustic protocols for altered states of consciousness, integrating principles from neuroaesthetics, consciousness studies, and immersive experience design. Her approach centres on creating measurable, non-pharmacological pathways to access and guide non-ordinary states — with an emphasis on safety, personalisation, and clinical applicability.<br/><br/>The system was developed through research into self-transcendent experiences, music-induced altered states, spatial and immersive sound, clinical integration practices, ritual theory, neuroaesthetics, and quantum mechanics.</p>
+      </div>
+    </div>
+
+    <div class="about-sage-section">
+      <p class="sk">About SAGE</p>
+      <h3 class="sh" style="font-size:clamp(22px,2.5vw,36px);margin-bottom:16px;">Created at the intersection of<br/><em>neuroscience, music, and altered states</em></h3>
+      <p class="si">SAGE emerges from a central question: how can we make access to transformative states safe, structured, and widely available — without pharmacological intervention?</p>
+      <div class="about-two-col">
+        <div class="about-col">
+          <h3>The research<br/><em>foundations</em></h3>
+          <p>The system was developed through research into:</p>
+          <div class="about-list">
+            <div class="about-li">Self-transcendent experiences</div>
+            <div class="about-li">Music-induced altered states</div>
+            <div class="about-li">Spatial and immersive sound</div>
+            <div class="about-li">Clinical integration practices</div>
+            <div class="about-li">Ritual theory &amp; neuroaesthetics</div>
+            <div class="about-li">Quantum mechanics</div>
+          </div>
+        </div>
+        <div class="about-col">
+          <h3>SAGE is not just a tool for<br/><em>inducing experiences.</em></h3>
+          <p>It is a framework for navigating them.</p>
+          <p>SAGE is a regulated interface into altered states. A training ground for consciousness navigation. A clinical modulation system — not merely an experience.</p>
+          <p>Our mission: expand access to depth-oriented therapeutic work, provide clinicians with measurable and structured tools, and create new pathways for connection, insight, and transformation that are genuinely affordable.</p>
+        </div>
+      </div>
+      <div style="margin-top:28px;"><p class="sk" style="margin-bottom:16px;">Three things SAGE is</p>
+      <div class="mission-cards"><div class="mc2"><div class="arr">→</div><p>A regulated interface into altered states — structured, safe, and practitioner-led at every point.</p></div><div class="mc2"><div class="arr">→</div><p>A training ground for consciousness navigation — patients learn to access these states on their own terms.</p></div><div class="mc2"><div class="arr">→</div><p>A clinical modulation system — not just an experience, but a measurable therapeutic intervention.</p></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     MUSIC VIEW
+══════════════════════════════════ -->
+<div class="view" id="view-music">
+  <div class="tab-page">
+    <div class="tp-header">
+      <p class="sk">Music &amp; Sound Design</p>
+      <h2 class="sh">A curated and adaptive<br/><em>sonic architecture</em></h2>
+      <p class="si">The SAGE protocol draws from multiple musical and acoustic approaches — each selected and composed based on its capacity to guide shifts in perception, emotion, and physiological state. Each journey is not a playlist, but a structured progression where sound acts as the primary guide.</p>
+    </div>
+
+    <p class="sk">What the music is designed to do</p>
+    <div class="music-list" style="margin-top:16px;margin-bottom:48px;">
+      <div class="mli">Modulate attention and focus</div>
+      <div class="mli">Access emotional and somatic memory</div>
+      <div class="mli">Facilitate non-verbal processing</div>
+      <div class="mli">Support safe entry into altered states</div>
+      <div class="mli">Guide safe return from altered states</div>
+      <div class="mli">Adapt in real time to physiological state</div>
+    </div>
+
+    <p class="sk">The sonic approaches</p>
+    <div class="music-grid">
+      <div class="mug-card"><h3>Ambient &amp; Minimal Compositions</h3><p>For nervous system regulation and grounding. These works create a stable acoustic container — the foundation from which deeper states become accessible.</p></div>
+      <div class="mug-card"><h3>Psychoacoustic Textures</h3><p>To influence spatial perception and internal focus. Sound that operates below the level of conscious attention, shifting the relationship between self and environment.</p></div>
+      <div class="mug-card"><h3>Rhythmic Entrainment</h3><p>To support state transitions and emotional processing. Tempo and rhythm as physiological tools — calibrated to the specific phase of the journey.</p></div>
+      <div class="mug-card"><h3>Harmonic &amp; Tonal Structures</h3><p>Designed to evoke tension, release, and resolution. Harmonic language selected for its capacity to move emotional material without requiring narrative.</p></div>
+      <div class="mug-card"><h3>Dynamic Soundscapes</h3><p>That evolve in response to the listener's physiological state. Each journey is a structured progression — sound as the primary guide through different depths of experience.</p></div>
+      <div class="mug-card"><h3>Spatial &amp; Immersive Sound</h3><p>Drawing on electroacoustic composition and diffusion. The spatial dimension of sound is a therapeutic tool, dissolving the boundaries of ordinary perception.</p></div>
+    </div>
+
+    <div class="artists-box">
+      <div>
+        <h3>For Musicians<br/>&amp; <em>Sound Artists</em></h3>
+        <p class="tgl">"We are not looking for tracks.<br/>We are looking for states,<br/>translated into sound."</p>
+      </div>
+      <div>
+        <p>If you are a musician, composer, or sound artist working with music that has the potential to evoke altered states of consciousness, we would love to hear from you.<br/><br/>We are building a curated library of works that prioritise depth over stimulation, intention over genre, and emotional and perceptual impact over form. Selected artists may be invited to collaborate on therapeutic sound journeys, adaptive compositions, and research-driven sonic environments.</p>
+        <button class="btn-out" onclick="switchView('contact')" style="margin-top:10px;">Submit Your Work</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     LICENSING VIEW
+══════════════════════════════════ -->
+<div class="view" id="view-licensing">
+  <div class="tab-page">
+    <div class="tp-header">
+      <p class="sk">Licensing</p>
+      <h2 class="sh">SAGE as a clinical tool<br/><em>for your practice</em></h2>
+      <p class="si">SAGE is offered as a clinical tool for licensed practitioners and organisations. All licensing includes structured onboarding to ensure safe and effective use of the protocol.</p>
+    </div>
+
+    <div class="lic-grid">
+      <div class="lic-card"><h3><em>Practitioner</em> Licensing</h3><p>Access to the SAGE platform, including patient management, session delivery, and integration tools.</p><div class="lic-list"><div class="lic-li">Full platform access</div><div class="lic-li">Patient management dashboard</div><div class="lic-li">Session delivery tools</div><div class="lic-li">AI integration guide</div><div class="lic-li">HRV wearable integration</div><div class="lic-li">Clinical reporting</div></div></div>
+      <div class="lic-card"><h3>Clinic &amp; <em>Institutional</em> Licensing</h3><p>Multi-user environments for clinics, retreats, and healthcare providers — including full group delivery capabilities.</p><div class="lic-list"><div class="lic-li">Multi-practitioner accounts</div><div class="lic-li">Group session delivery</div><div class="lic-li">Communal integration circles</div><div class="lic-li">Institutional reporting</div><div class="lic-li">NHS and clinic compatible</div><div class="lic-li">Bespoke onboarding</div></div></div>
+      <div class="lic-card"><h3>Training &amp; <em>Onboarding</em></h3><p>Structured onboarding to ensure safe and effective use of the protocol at every level of the organisation.</p><div class="lic-list"><div class="lic-li">Clinical framework training</div><div class="lic-li">Safety and contraindication screening</div><div class="lic-li">Integration facilitation training</div><div class="lic-li">Ongoing practitioner support</div></div></div>
+    </div>
+
+    <div class="ea-box">
+      <div class="ea-h">Early Access <em>Programme</em></div>
+      <p class="ea-p">SAGE is currently in development. We are onboarding a limited number of clinicians for pilot testing at a reduced launch rate.</p>
+      <div class="ea-list"><div class="ea-li">Direct support from the founding team</div><div class="ea-li">Direct influence over product development</div><div class="ea-li">Early access pricing</div><div class="ea-li">Priority access to future clinical tools</div></div>
+      <button class="btn-acc" onclick="switchView('contact')">Apply for Early Access</button>
+    </div>
+
+    <div class="pdf-box" style="margin-top:40px;">
+      <h3>Protocol PDF</h3>
+      <p style="font-size:15px;color:var(--dim);margin-bottom:18px;line-height:1.82;">A complete document outlining the end-to-end framework — for clinicians who want to understand how SAGE integrates into their existing practice.</p>
+      <div class="pdf-list">
+        <div class="pdf-li">Patient intake and readiness assessment</div>
+        <div class="pdf-li">Personalisation logic and pathway selection</div>
+        <div class="pdf-li">Session architecture — induction, peak, integration</div>
+        <div class="pdf-li">HRV integration and adaptive sonic modulation</div>
+        <div class="pdf-li">AI-guided integration model across 5 dimensions</div>
+        <div class="pdf-li">Clinical measurement and reporting structure</div>
+        <div class="pdf-li">Safety considerations and practitioner guidelines</div>
+      </div>
+      <div class="pdf-lock">⬤ &nbsp; Available to licensed practitioners on subscription</div>
+      <button class="btn-acc" onclick="switchView('contact')">Request Access</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     CONTACT VIEW
+══════════════════════════════════ -->
+<div class="view" id="view-contact">
+  <div class="tab-page">
+    <div class="tp-header">
+      <p class="sk">Contact</p>
+      <h2 class="sh">Let's talk about<br/><em>what's possible</em></h2>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <p class="contact-info" style="font-size:15px;line-height:1.82;color:var(--dim);margin-bottom:18px;">We would love to hear from you — whether you are a clinician exploring SAGE for your practice, a researcher in altered states, or a musician interested in collaborating.</p>
+        <div class="cwho">
+          <div class="cwho-i">A clinician, wellness practitioner, or psychedelic therapist interested in testing SAGE</div>
+          <div class="cwho-i">A researcher exploring altered states of consciousness</div>
+          <div class="cwho-i">A clinic looking to integrate new therapeutic protocols</div>
+          <div class="cwho-i">A musician or sound artist interested in collaborating</div>
+        </div>
+        <div class="cdet">
+          <div class="cdrow"><div class="cdl">Email</div><div class="cdv">anaivivcaro@gmail.com</div></div>
+          <div class="cdrow"><div class="cdl">Location</div><div class="cdv">London · Available internationally</div></div>
+          <div class="cdrow"><div class="cdl">Programmes</div><div class="cdv">Clinical partnerships · Pilot programmes · Early access cohort</div></div>
+        </div>
+      </div>
+      <!-- Formspree — replace YOUR_FORM_ID after signing up at formspree.io -->
+      <form class="cform" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input type="hidden" name="_replyto" value="anaivivcaro@gmail.com"/>
+        <input type="hidden" name="_subject" value="SAGE Clinical Enquiry"/>
+        <div class="frow">
+          <div class="ff"><label for="nm">Full name</label><input type="text" id="nm" name="name" placeholder="Dr. Jane Smith" required/></div>
+          <div class="ff"><label for="em">Email address</label><input type="email" id="em" name="email" placeholder="jane@clinic.com" required/></div>
+        </div>
+        <div class="ff"><label for="rl">Your role</label><select id="rl" name="role"><option value="">Select your role</option><option>Psychotherapist</option><option>Psychiatrist</option><option>Psychedelic-assisted therapy provider</option><option>Clinical researcher</option><option>Wellbeing practitioner</option><option>Retreat / festival facilitator</option><option>NHS / community mental health</option><option>Musician / sound artist</option><option>Other</option></select></div>
+        <div class="ff"><label for="int">What brings you to SAGE?</label><select id="int" name="interest"><option value="">Select your interest</option><option>Clinical demo request</option><option>Early access / founding cohort</option><option>Research collaboration</option><option>Music / sound design collaboration</option><option>Institutional / clinic licensing</option><option>General enquiry</option></select></div>
+        <div class="ff"><label for="msg">Tell us more</label><textarea id="msg" name="message" placeholder="Tell us about your practice, what you hope to explore with SAGE, or any questions you have..."></textarea></div>
+        <button type="submit" class="fsub">Send Message →</button>
+        <p class="fnote">We aim to respond within 48 hours. All enquiries are treated with complete confidentiality.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ftl"><span class="ftn">SAGE</span><span class="ftt">Clinical Protocol</span></div>
+  <div class="ftlinks">
+    <button onclick="switchView('home')">Protocol</button>
+    <button onclick="switchView('about')">About</button>
+    <button onclick="switchView('music')">Music</button>
+    <button onclick="switchView('licensing')">Licensing</button>
+    <button onclick="switchView('contact')">Contact</button>
+  </div>
+  <p class="ftcopy">© 2026 SAGE · Clinical Division · All rights reserved</p>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';setTimeout(()=>{cur2.style.left=mx+'px';cur2.style.top=my+'px';},80);});
+document.querySelectorAll('a,button,input,select,textarea').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='14px';cur.style.height='14px';cur2.style.width='48px';cur2.style.height='48px';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='7px';cur.style.height='7px';cur2.style.width='32px';cur2.style.height='32px';});
+});
+
+/* ── NAV ── */
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>50));
+function toggleMob(){const m=document.getElementById('mm');m.style.display=m.style.display==='flex'?'none':'flex';}
+
+/* ── TAB SWITCHING ── */
+function switchView(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active-tab'));
+  if(btn)btn.classList.add('active-tab');
+  window.scrollTo({top:0,behavior:'smooth'});
+  // Re-trigger reveals in new view
+  setTimeout(()=>{
+    document.querySelectorAll('#view-'+id+' .reveal').forEach(el=>{
+      el.classList.remove('vis');
+      ro.observe(el);
+    });
+  },100);
+}
+
+/* ── REVEAL ── */
+const ro=new IntersectionObserver(entries=>entries.forEach((e,i)=>{
+  if(e.isIntersecting)setTimeout(()=>e.target.classList.add('vis'),i*50);
+}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+/* ════════════════════════════════════════
+   CANVAS ENGINE
+   Three pattern types:
+   1. blob()      — organic morphing shapes
+   2. cymatic()   — interference rings + radial spokes (Chladni-inspired)
+   3. mycelium()  — branching filament networks
+════════════════════════════════════════ */
+
+/* Smooth morphing blob */
+function blob(ctx,cx,cy,R,n,t,spd,r,g,b,a){
+  const pts=[];
+  for(let i=0;i<n;i++){
+    const ang=(i/n)*Math.PI*2-Math.PI/2;
+    const noise=Math.sin(t*spd+i*2.4)*0.28+Math.sin(t*spd*1.6+i*1.1)*0.13+Math.cos(t*spd*0.7+i*3.1)*0.09;
+    pts.push({x:cx+Math.cos(ang)*R*(1+noise),y:cy+Math.sin(ang)*R*(1+noise)});
+  }
+  ctx.beginPath();
+  const sx=(pts[n-1].x+pts[0].x)/2,sy=(pts[n-1].y+pts[0].y)/2;
+  ctx.moveTo(sx,sy);
+  for(let i=0;i<n;i++){const c=pts[i],nx=pts[(i+1)%n];ctx.quadraticCurveTo(c.x,c.y,(c.x+nx.x)/2,(c.y+nx.y)/2);}
+  ctx.closePath();ctx.fillStyle=`rgba(${r},${g},${b},${a})`;ctx.fill();
+}
+
+/* Cymatic: modulated rings + radial interference — like Chladni figures or water surface waves */
+function cymatic(ctx,cx,cy,R,freq,t,r,g,b,a){
+  const rings=5;
+  for(let ring=1;ring<=rings;ring++){
+    const rr=R*(ring/rings);
+    ctx.beginPath();
+    for(let i=0;i<=360;i++){
+      const ang=i*Math.PI/180;
+      const mod=Math.sin(freq*ang+t*0.25)*0.1+Math.sin(freq*2*ang-t*0.18)*0.06;
+      const px=cx+Math.cos(ang)*rr*(1+mod);
+      const py=cy+Math.sin(ang)*rr*(1+mod)*.62;
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+    ctx.strokeStyle=`rgba(${r},${g},${b},${a*(1-ring/(rings+2))})`;
+    ctx.lineWidth=0.6;ctx.stroke();
+  }
+  // Radial spokes
+  const spokes=Math.round(freq)+4;
+  for(let i=0;i<spokes;i++){
+    const ang=(i/spokes)*Math.PI*2+t*0.04;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(ang)*R*0.08,cy+Math.sin(ang)*R*0.08*0.62);
+    ctx.lineTo(cx+Math.cos(ang)*R,cy+Math.sin(ang)*R*0.62);
+    ctx.strokeStyle=`rgba(${r},${g},${b},${a*0.35})`;ctx.lineWidth=0.5;ctx.stroke();
+  }
+}
+
+/* Mycelium: branching filament network grown from seed nodes */
+function mycelium(ctx,nodes,t,r,g,b,a,maxDist){
+  nodes.forEach((n1,i)=>{
+    // Pulsing halo at node
+    const pulse=0.5+Math.sin(t*0.8+n1.phase)*0.3;
+    ctx.beginPath();ctx.arc(n1.x,n1.y,2*pulse,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${r},${g},${b},${a*0.5})`;ctx.fill();
+    // Filaments to neighbours
+    nodes.slice(i+1).forEach((n2,j)=>{
+      const d=Math.hypot(n1.x-n2.x,n1.y-n2.y);
+      if(d>maxDist)return;
+      const alpha=a*(1-d/maxDist)*(0.4+Math.sin(t*0.3+i+j)*0.25);
+      // Slightly curved filament
+      const mx2=(n1.x+n2.x)/2+Math.sin(t*0.2+i*1.3)*14;
+      const my2=(n1.y+n2.y)/2+Math.cos(t*0.15+j*1.1)*14;
+      ctx.beginPath();ctx.moveTo(n1.x,n1.y);
+      ctx.quadraticCurveTo(mx2,my2,n2.x,n2.y);
+      ctx.strokeStyle=`rgba(${r},${g},${b},${alpha})`;ctx.lineWidth=0.5;ctx.stroke();
+    });
+  });
+}
+
+/* ── HERO CANVAS — ECG + blobs + subtle cymatic ── */
+(function(){
+  const c=document.getElementById('hcv'),ctx=c.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // Background blobs
+    blob(ctx,W*.72,H*.28,W*.18,6,t,.22,176,96,200,.07);
+    blob(ctx,W*.88,H*.62,W*.24,7,t,.15,62,184,176,.05);
+    blob(ctx,W*.6,H*.7,W*.14,5,t,.3,176,96,200,.05);
+    // Cymatic overlay — very faint
+    cymatic(ctx,W*.75,H*.45,W*.22,5,t,176,96,200,.04);
+    // ECG line
+    const cy=H*.44;
+    ctx.beginPath();
+    for(let x=0;x<=W;x++){
+      const nm=(x/W)*24+t*.36;
+      const beat=Math.sin(nm*4)>.96;
+      let y=cy;
+      if(beat){const l=(x%68)/68;y=cy-Math.sin(l*Math.PI)*95*Math.max(0,1-Math.abs(l-.5)*4);}
+      else{y=cy+Math.sin(nm)*.4*12;}
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle='rgba(176,96,200,0.52)';ctx.lineWidth=1.4;ctx.stroke();
+    ctx.strokeStyle='rgba(176,96,200,0.08)';ctx.lineWidth=7;ctx.stroke();
+    // HRV scatter
+    for(let i=0;i<24;i++){
+      const px=((i/24)*W+Math.sin(t*.26+i)*.007*W+W)%W;
+      const py=H*.74+Math.sin(i*2.6+t*.43)*34;
+      ctx.beginPath();ctx.arc(px,py,1.1,0,Math.PI*2);
+      ctx.fillStyle=`rgba(62,184,176,${.2+Math.sin(t+i)*.12})`;ctx.fill();
+    }
+    const vg=ctx.createLinearGradient(0,0,W,0);
+    vg.addColorStop(0,'rgba(6,9,16,0.97)');vg.addColorStop(.44,'transparent');vg.addColorStop(1,'rgba(6,9,16,0.05)');
+    ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
+    t+=.013;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── ORGANIC BANDS — mix of cymatic and mycelium ── */
+function makeBand(id,type){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext('2d');let W,H,t=0;
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  // Mycelium nodes seeded along the band
+  const nodes=Array.from({length:30},(_,i)=>({
+    x:((i/30)*W*1.2+Math.random()*80)%W,
+    y:H*.2+Math.random()*H*.6,
+    phase:Math.random()*Math.PI*2,
+    vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.08
+  }));
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    if(type==='cymatic'){
+      // Three cymatic centres along the band
+      [{f:.2,fr:4},{f:.5,fr:6},{f:.8,fr:5}].forEach(p=>{
+        cymatic(ctx,p.f*W,H*.5,H*.65,p.fr,t,176,96,200,.055);
+      });
+      // Subtle connecting wave
+      ctx.beginPath();
+      for(let x=0;x<=W;x+=2){
+        const y=H*.5+Math.sin(x*.007+t*.28)*H*.26+Math.sin(x*.013+t*.19)*H*.12;
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle='rgba(176,96,200,0.12)';ctx.lineWidth=1;ctx.stroke();
+    } else {
+      // Mycelium band
+      nodes.forEach(n=>{n.x=(n.x+n.vx+W)%W;n.y=Math.max(H*.1,Math.min(H*.9,n.y+n.vy));if(n.y<H*.15||n.y>H*.85)n.vy*=-1;});
+      mycelium(ctx,nodes,t,176,96,200,.08,W*.22);
+      // Subtle blobs
+      blob(ctx,W*.25,H*.5,H*.52,5,t,.18,176,96,200,.05);
+      blob(ctx,W*.72,H*.5,H*.48,6,t,.14,62,184,176,.04);
+    }
+    t+=.011;requestAnimationFrame(draw);
+  }
+  draw();
+}
+makeBand('band1','cymatic');
+makeBand('band2','mycelium');
+makeBand('band3','cymatic');
+
+/* ── MEASUREMENT — ambient cymatic background ── */
+(function(){
+  const c=document.getElementById('mcv'),ctx=c.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    cymatic(ctx,W*.12,H*.35,Math.min(W,H)*.32,5,t,176,96,200,.045);
+    cymatic(ctx,W*.88,H*.6,Math.min(W,H)*.28,7,t+1.2,62,184,176,.038);
+    blob(ctx,W*.5,H*.5,Math.min(W,H)*.38,8,t,.07,176,96,200,.03);
+    t+=.009;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── ADVISORY — mycelium background ── */
+(function(){
+  const c=document.getElementById('advcv'),ctx=c.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  const nodes=Array.from({length:40},()=>({
+    x:Math.random()*1200,y:Math.random()*700,
+    phase:Math.random()*Math.PI*2,
+    vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.08
+  }));
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    nodes.forEach(n=>{n.x=(n.x+n.vx+W)%W;n.y=(n.y+n.vy+H)%H;});
+    mycelium(ctx,nodes,t,176,96,200,.07,180);
+    cymatic(ctx,W*.9,H*.15,Math.min(W,H)*.22,4,t,62,184,176,.035);
+    t+=.008;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── PROTOCOL — grid + mycelium ── */
+(function(){
+  const c=document.getElementById('pcv'),ctx=c.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  const nodes=Array.from({length:20},()=>({
+    x:Math.random()*1200,y:Math.random()*600,
+    phase:Math.random()*Math.PI*2,
+    vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.07
+  }));
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='rgba(176,96,200,0.04)';ctx.lineWidth=.8;
+    for(let x=0;x<W;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    nodes.forEach(n=>{n.x=(n.x+n.vx+W)%W;n.y=(n.y+n.vy+H)%H;});
+    mycelium(ctx,nodes,t,176,96,200,.055,160);
+    t+=.009;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── CTA CANVAS — blobs + cymatic ── */
+(function(){
+  const c=document.getElementById('ctacv'),ctx=c.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=c.width=c.offsetWidth;H=c.height=c.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    blob(ctx,W*.2,H*.3,Math.min(W,H)*.24,6,t,.17,176,96,200,.09);
+    blob(ctx,W*.78,H*.62,Math.min(W,H)*.28,7,t,.13,62,184,176,.08);
+    blob(ctx,W*.5,H*.5,Math.min(W,H)*.38,8,t,.09,176,96,200,.06);
+    cymatic(ctx,W*.15,H*.7,Math.min(W,H)*.2,4,t,62,184,176,.04);
+    cymatic(ctx,W*.85,H*.25,Math.min(W,H)*.18,5,t+0.8,176,96,200,.04);
+    t+=.011;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── FORMSPREE FALLBACK ── */
+const form=document.querySelector('.cform');
+if(form){form.addEventListener('submit',function(e){if(form.getAttribute('action').includes('YOUR_FORM_ID')){e.preventDefault();alert('To activate the form:\n1. Go to formspree.io\n2. Create a free account\n3. Create a new form\n4. Replace YOUR_FORM_ID in index.html with your form ID\n\nFor now, email anaivivcaro@gmail.com directly.');}});}
+</script>
+</body>
+</html>
